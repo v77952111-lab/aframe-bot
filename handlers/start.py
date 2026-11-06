@@ -37,3 +37,14 @@ async def help_cb(call: CallbackQuery):
         "/start — вернуться в меню",
     )
     await call.answer()
+    from aiogram.filters import Command
+
+@router.message(Command("cancel"))
+async def cmd_cancel(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer("Действие отменено. Возвращаю в меню.", reply_markup=main_menu())
+
+@router.message(F.text.lower() == "отмена")
+async def text_cancel(message: Message, state: FSMContext):
+    await state.clear()
+    await message.answer("Действие отменено. Возвращаю в меню.", reply_markup=main_menu())
