@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -21,24 +21,6 @@ async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     await message.answer("Привет! Я помогу с проектом A-frame дома.\n\nВыбери действие:", reply_markup=main_menu())
 
-@router.callback_query(F.data == "menu")
-async def back_to_menu(call: CallbackQuery, state: FSMContext):
-    await state.clear()
-    await call.message.edit_text("Главное меню:", reply_markup=main_menu())
-    await call.answer()
-
-@router.callback_query(F.data == "help")
-async def help_cb(call: CallbackQuery):
-    await call.message.edit_text(
-        "Что умею:\n"
-        "🏠 Рассчитать — площадь, объём, материалы\n"
-        "📋 Чек-лист — этапы стройки\n"
-        "🤖 ИИ — свободные вопросы по проекту\n\n"
-        "/start — вернуться в меню",
-    )
-    await call.answer()
-    from aiogram.filters import Command
-
 @router.message(Command("cancel"))
 async def cmd_cancel(message: Message, state: FSMContext):
     await state.clear()
@@ -48,3 +30,14 @@ async def cmd_cancel(message: Message, state: FSMContext):
 async def text_cancel(message: Message, state: FSMContext):
     await state.clear()
     await message.answer("Действие отменено. Возвращаю в меню.", reply_markup=main_menu())
+
+@router.callback_query(F.data == "menu")
+async def back_to_menu(call: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await call.message.edit_text("Главное меню:", reply_markup=main_menu())
+    await call.answer()
+
+@router.callback_query(F.data == "help")
+async def help_cb(call: CallbackQuery):
+    await call.message.edit_text("Что умею:\n🏠 Рассчитать — материалы\n📋 Чек-лист — этапы\n📊 Анализ акций — биржа\n🤖 ИИ — вопросы\n\n/start — меню")
+    await call.answer()
